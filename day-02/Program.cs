@@ -13,6 +13,7 @@ public class Position
 {
     public int Horizontal { get; set; }
     public int Depth { get; set; }
+    public int Aim { get; set; }
 }
 
 public class Instruction
@@ -68,12 +69,13 @@ public class Submarine
         {
             case Direction.Forward:
                 this.Position.Horizontal += instruction.Distance;
+                this.Position.Depth += this.Position.Aim * instruction.Distance;
                 break;
             case Direction.Down:
-                this.Position.Depth += instruction.Distance;
+                this.Position.Aim += instruction.Distance;
                 break;
             case Direction.Up:
-                this.Position.Depth -= instruction.Distance;
+                this.Position.Aim -= instruction.Distance;
                 break;
         }
     }
