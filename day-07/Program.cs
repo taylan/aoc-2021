@@ -10,7 +10,7 @@ for (int potentialTargetPosition = 0; potentialTargetPosition < numTargetPositio
     int fuelCost = 0;
     foreach (int crab in crabs)
     {
-        fuelCost += Math.Abs(crab - potentialTargetPosition);
+        fuelCost += SumThing(Math.Abs(crab - potentialTargetPosition));
     }
 
     if (fuelCost < minFuelCost)
@@ -20,3 +20,14 @@ for (int potentialTargetPosition = 0; potentialTargetPosition < numTargetPositio
 }
 
 Console.WriteLine(minFuelCost);
+
+int SumThing(int num)
+{
+    int sum = 0;
+    for (int i = 0; i < num; i++)
+    {
+        sum += i + 1;
+    }
+
+    return sum;
+}
