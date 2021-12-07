@@ -1,15 +1,16 @@
 ﻿
 using System.Text;
 
-string filename = "test-input.txt";
+string filename = "input.txt";
 
 List<string> lines = File.ReadLines(filename).ToList();
 
-int mapSize = File.ReadAllText(filename).Replace(" -> ", ",").Replace("\n", ",").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).Max();
+int mapSize = File.ReadAllText(filename).Replace(" -> ", ",").Replace("\n", ",").Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).Max() + 1;
 
 OceanFloorMap map = new OceanFloorMap(lines, mapSize);
 
-Console.WriteLine(map.ToString());
+int numDangerousPoints = map.GetNumDangerousPoints();
+Console.WriteLine($"Dangerous points: {numDangerousPoints}");
 
 public class OceanFloorMap
 {
@@ -25,8 +26,6 @@ public class OceanFloorMap
 
     private void InitializeMap(List<string> lines)
     {
-        Console.WriteLine("Initializing map...");
-        
         for (int i = 0; i < this._mapSize; i++)
         {
             for (int j = 0; j < this._mapSize; j++)
@@ -50,7 +49,31 @@ public class OceanFloorMap
 
             if (x1 != x2 && y1 != y2)
             {
-                Console.WriteLine($"Ignoring non-straight {line}.");
+                continue;
+            }
+
+            if (x1 == x2)
+            {
+                int startIndex = new[] {y1, y2}.Min();
+                int numPoints = Math.Abs(y1 - y2) + 1;
+                if (numPoints == 2)
+                    numPoints++;
+
+                for (int i = startIndex; i < startIndex + numPoints; i++)
+                {
+                    this._map[i, x1].Number++;
+                }
+            }
+
+            if (y1 == y2)
+            {
+                int startIndex = new[] {x1, x2}.Min();
+                int numPoints = Math.Abs(x1 - x2) + 1;
+
+                for (int i = startIndex; i < startIndex + numPoints; i++)
+                {
+                    this._map[y1, i].Number++;
+                }
             }
         }
         
@@ -71,6 +94,21 @@ public class OceanFloorMap
         }
 
         return builder.ToString();
+    }
+
+    public int GetNumDangerousPoints()
+    {
+        int numDangerousPoints = 0;
+        for (int i = 0; i < this._mapSize; i++)
+        {
+            for (int j = 0; j < this._mapSize; j++)
+            {
+                if (this._map[i, j].Number >= 2)
+                    numDangerousPoints++;
+            }
+        }
+
+        return numDangerousPoints;
     }
 }
 
